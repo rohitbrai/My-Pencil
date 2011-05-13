@@ -306,8 +306,11 @@ Controller.prototype.saveDocument = function (saveAsArg) {
     return true;
 };
 Controller.prototype.loadDocument = function (uri) {
+	dump("Loading document " + uri);
     if (this.modified) {
-        if (!this._confirmAndSaveDocument()) return;
+        if (!this._confirmAndSaveDocument()) {
+        	return;
+        }
     }
     var file = null;
     if (!uri) {
@@ -372,35 +375,6 @@ Controller.prototype.loadDocument = function (uri) {
     } catch (e) {
         Console.dumpError(e, true);
     }
-
-    /*this._clearView();
-    document.documentElement.setAttribute("wait-cursor", true);
-
-    try {
-        this.doc = XMLDocumentPersister.load(file);
-    } catch (e) {
-        Console.dumpError(e);
-        throw e;
-    }
-    this._pageSetupCount = 0;
-    var thiz = this;
-    for (p in this.doc.pages) {
-        this._createPageView(this.doc.pages[p], function () {
-            thiz._pageSetupCount ++;
-            if (thiz._pageSetupCount == thiz.doc.pages.length) {
-                //alert("all page loaded");
-                thiz._ensureAllBackgrounds(function () {
-                    thiz._setSelectedPageIndex(0);
-
-                    thiz.filePath = path;
-                    Pencil.setTitle(thiz.filePath);
-
-                    thiz.markDocumentSaved();
-                    document.documentElement.removeAttribute("wait-cursor");
-                });
-            }
-        });
-    }*/
     this._loadDocumentImpl(file, path);
     }
 Controller.prototype._loadDocumentImpl = function (file, path) {
@@ -423,7 +397,6 @@ Controller.prototype._loadDocumentImpl = function (file, path) {
         function loadPage() {
             p++;
             try {
-	            //debug("thiz.doc.pages.length: " + thiz.doc.pages.length);
     	        listener.onProgressUpdated(Util.getMessage("loading.page", thiz.doc.pages[p].properties.name), thiz._pageSetupCount + 1, thiz.doc.pages.length);
         	    thiz._createPageView(thiz.doc.pages[p], function () {
             	    thiz._pageSetupCount ++;
@@ -448,7 +421,7 @@ Controller.prototype._loadDocumentImpl = function (file, path) {
             } catch (ex) {
                 document.documentElement.removeAttribute("wait-cursor");
                 listener.onTaskDone();
-                Util.error(Util.getMessage("error.title"), e.message, Util.getMessage("button.cancel.close"));
+                Util.error(Util.getMessage("error.title"), ex.message, Util.getMessage("button.cancel.close"));
             }
         }
         loadPage();
