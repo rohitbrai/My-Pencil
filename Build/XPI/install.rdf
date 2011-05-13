@@ -7,12 +7,12 @@
                    em:skin="skin"
                    em:locale="locale" />
     <RDF:Description RDF:about="urn:mozilla:install-manifest"
-                   em:id="pencil@evolus.vn"
+                   em:id="pencil-ff4@googlecode.com"
                    em:name="%name%"
                    em:version="%version%.%build%"
                    em:description="Sketching, simplified"
                    em:creator="%author%"
-                   em:homepageURL="http://www.evolus.vn/Pencil/"
+                   em:homepageURL="http://pencil-ff4.googlecode.com"
                    em:iconURL="chrome://pencil/content/Icons/48.png">
        <em:targetApplication RDF:resource="rdf:firefox"/>
     </RDF:Description>

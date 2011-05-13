@@ -2,7 +2,7 @@
 
 <RDF:RDF xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
          xmlns:em="http://www.mozilla.org/2004/em-rdf#">
-  <RDF:Description RDF:about="urn:mozilla:extension:pencil@evolus.vn">
+  <RDF:Description RDF:about="urn:mozilla:extension:pencil-ff4@code.google.com">
     <em:updates>
       <RDF:Seq>
         <RDF:li>
@@ -14,7 +14,7 @@
                 <em:minVersion>%fxminver%</em:minVersion>
                 <em:maxVersion>%fxmaxver%</em:maxVersion>
 
-                <em:updateLink>http://www.evolus.vn/Pencil/Downloads/%xpiname%</em:updateLink>
+                <em:updateLink>http://pencil-ff4.googlecode.com/files/%xpiname%</em:updateLink>
                 <em:updateHash>sha1:%xpihash%</em:updateHash>
 
               </RDF:Description>
