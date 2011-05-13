@@ -400,7 +400,7 @@
         </toolbar>
     </toolbox>
     <popupset>
-        <popup id="pageTabContextMenu">
+        <menupopup id="pageTabContextMenu">
             <menuitem class="menuitem-iconic" image="moz-icon://stock/add?size=menu" label="&menu.new.page.label;" id="newPageMenuItem" command="newPageCommand"/>
             <menuseparator/>
             <menuitem class="menuitem-iconic" image="moz-icon://stock/edit-copy?size=menu" label="&menu.duplicate.label;" id="pageDuplicateMenuItem" command="duplicatePageCommand"/>
@@ -414,7 +414,7 @@
             <menuitem label="&menu.re.order.pages.label;" id="reorderPageMenuItem" command="reorderPagesCommand" style="display: none;"/>
             <menuseparator/>
             <menuitem class="menuitem-iconic" image="moz-icon://stock/gtk-edit?size=menu" label="&menu.edit.page.notes.label;" id="pageNoteMenuItem" />
-        </popup>
+        </menupopup>
     </popupset>
     <hbox flex="1" id="mainBox">
         <spacer />

@@ -2338,7 +2338,7 @@
         <xbl:content xmlns:xbl="http://www.mozilla.org/xbl"
                 xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
             <popupset>
-                <popup aid="contextPopup">
+                <menupopup aid="contextPopup">
 
                     <menuitem label="&menu.undo.label;" key="undoKey" command="undoCommand" aid="contextUndoMenu"/>
                     <menuitem label="&menu.redo.label;" key="redoKey" command="redoCommand" aid="contextRedoMenu"/>
@@ -2381,7 +2381,7 @@
                     <menuseparator/>
 
                     <menuitem aid="propertyMenuItem" label="&menu.properties.label;" command="editPagePropertiesCommand"/>
-                </popup>
+                </menupopup>
             </popupset>
         </xbl:content>
     </binding>

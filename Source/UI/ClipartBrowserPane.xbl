@@ -389,10 +389,10 @@
                 xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
             <vbox aid="contentBox" flex="1"></vbox>
             <popupset>
-                <popup aid="contextPopup">
+                <menupopup aid="contextPopup">
                     <menuitem aid="copyMenuItem" label="&menu.copy.image.label;" />
                     <menuitem aid="insertMenuItem" label="&menu.insert.image.label;" />
-                </popup>
+                </menupopup>
             </popupset>
         </xbl:content>
     </binding>

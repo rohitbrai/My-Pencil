@@ -318,7 +318,7 @@
                 </vbox>
             </vbox>
             <popupset>
-                <popup aid="contextPopup">
+                <menupopup aid="contextPopup">
                     <menuitem aid="editShapeMenuItem" label="&menu.edit.this.shape.label;" />
                     <menuitem aid="deleteShapeMenuItem" label="&menu.delete.this.shape.label;" />
                     <menuseparator/>
@@ -330,7 +330,7 @@
                     <menuitem aid="removeAllCollectionMenuItem" label="&menu.delete.all.collections.label;" />
                     <menuseparator aid="sepAboutMenuItem"/>
                     <menuitem aid="aboutMenuItem" label="&menu.about.label;" />
-                </popup>
+                </menupopup>
             </popupset>
         </xbl:content>
     </binding>
