@@ -79,12 +79,10 @@ var relativeHRefHook = {
     },
     onLoad: function (doc) {
         if (this.missedFilePaths.length > 0) {
-            //Util.warn(Util.getMessage("warning.title"), Util.getMessage("document.missing.external.resources", this.missedFilePaths.join("\n\t● ")), Util.getMessage("button.cancel.close"));
             alert(Util.getMessage("document.missing.external.resources", this.missedFilePaths.join("\n\t● ")));
             this.missedFilePaths = [];
         }
         if (this.badImageDataFound) {
-            //Util.error(Util.getMessage("error.title"), Util.getMessage("error.bad.image.data.was.found.in.the.document"), Util.getMessage("button.cancel.close"));
             alert(Util.getMessage("error.bad.image.data.was.found.in.the.document"));
             this.badImageDataFound = false;
         }

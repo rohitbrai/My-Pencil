@@ -1,86 +1,56 @@
-/**
- * Contains utility functions to avoid duplication  
- */
-function PencilDom(dom) {
-  this.dom = dom;
-}
-PencilDom.prototype.createProperty = function(name, value) {
-  var propertyNode = this.createElement("Property");
-    propertyNode.setAttribute("name", name);
-    propertyNode.appendChild(dom.createTextNode(value));
-  return propertyNode;
-};
-PencilDom.prototype.createElement = function(element) {
-  return this.dom.createElementNS(PencilNamespaces.p, element);
-};
-PencilDom.prototype.createChild = function(element) {
-  var child = this.createElement(element);
-  this.dom.documentElement.appendChild(child);
-  return child;
-};
-
-
 function PencilDocument() {
     this.properties = {};
     this.pages = [];
-    
-    
-    function addDocumentProperties(pd) {
-      var propertyContainerNode = pd.createChild("Properties");
-      var property = null;
-      for (property in this.properties) {
-        var propertyNode = pd.createProperty(property, this.properties[property].toString());
-        propertyContainerNode.appendChild(propertyNode);
-      }
-    }
-    
-    function addDocumentPages(pd) {
-      var pageContainerNode = pd.createChild("Pages");
-      var page = null;
-      for (page in this.pages) {
-          pageContainerNode.appendChild(this.pages[i].toNode(dom));
-      }
-    }
-    
-    this.toDom = function() {
-      var dom = document.implementation.createDocument(PencilNamespaces.p, "Document", null);
-      var pd = new PencilDom(dom);
-      addDocumentProperties(pd);
-      addDocumentPages(pd);
-      return dom;
-    };
-    
 }
+PencilDocument.prototype.toDom = function () {
+    var dom = document.implementation.createDocument(PencilNamespaces.p, "Document", null);
+
+    //properties
+    var propertyContainerNode = dom.createElementNS(PencilNamespaces.p, "Properties");
+    dom.documentElement.appendChild(propertyContainerNode);
+
+    for (name in this.properties) {
+        var propertyNode = dom.createElementNS(PencilNamespaces.p, "Property");
+        propertyContainerNode.appendChild(propertyNode);
+
+        propertyNode.setAttribute("name", name);
+        var propValue = this.properties[name];
+        if(propValue){
+          propertyNode.appendChild(dom.createTextNode(propValue.toString()));
+        }
+    }
+
+    //pages
+    var pageContainerNode = dom.createElementNS(PencilNamespaces.p, "Pages");
+    dom.documentElement.appendChild(pageContainerNode);
+
+    for (i in this.pages) {
+        pageContainerNode.appendChild(this.pages[i].toNode(dom));
+    }
+
+    return dom;
+};
 
 PencilDocument.prototype.addPage = function (page) {
     this.pages[this.pages.length] = page;
 };
 PencilDocument.prototype.getPageById = function (id) {
-    var i = null;
-    for (i in this.pages) {
-        if (this.pages[i].properties.id === id) {
-          return this.pages[i];
-        }
+    for (var i in this.pages) {
+        if (this.pages[i].properties.id == id) return this.pages[i];
     }
 
     return null;
 };
 PencilDocument.prototype.getPageByFid = function (fid) {
-    var i = null;
-    for (i in this.pages) {
-        if (this.pages[i].properties.fid === fid) {
-          return this.pages[i];
-        }
+    for (var i in this.pages) {
+        if (this.pages[i].properties.fid == fid) return this.pages[i];
     }
 
     return null;
 };
 PencilDocument.prototype.getFirstPageByName = function (name) {
-    var i = null;
-    for (i in this.pages) {
-        if (this.pages[i].properties.name === name) {
-          return this.pages[i];
-        }
+    for (var i in this.pages) {
+        if (this.pages[i].properties.name == name) return this.pages[i];
     }
 
     return null;
@@ -88,9 +58,7 @@ PencilDocument.prototype.getFirstPageByName = function (name) {
 
 
 function Page(doc) {
-    if (!doc) {
-      throw Util.getMessage("attempting.to.construct.a.page.outside.the.scope.of.a.valid.document");
-    }
+    if (!doc) throw Util.getMessage("attempting.to.construct.a.page.outside.the.scope.of.a.valid.document");
     this.doc = doc;
     this.properties = {};
     this.contentNode = null;
@@ -104,28 +72,24 @@ Page.prototype.validateLoadedData = function () {
     this.properties.dimBackground = (this.properties.dimBackground == "true");
 };
 Page.prototype.toNode = function (dom, noContent) {
-    var pd = new PencilDom(dom, this);
-    var pageNode = pd.createElement("Page");
-    
-    var propertyContainerNode = pd.createElement("Properties");
+    var pageNode = dom.createElementNS(PencilNamespaces.p, "Page");
+
+    var propertyContainerNode = dom.createElementNS(PencilNamespaces.p, "Properties");
     pageNode.appendChild(propertyContainerNode);
 
-    for (property in this.properties) {
-      var propertyNode = null;
-      // The user cannot save the document if 
-      // there is a page that does not have a name
-      // By default the first page of a new document
-      // is untitled and the name is missing. 
-      if(property === 'name' && !this.properties[property]) {
-         propertyNode = pd.createProperty(property, Util.message("untitled.page"));
-      }  else {
-           propertyNode = pd.createProperty(property, this.properties[property].toString());  
-      }
-      propertyContainerNode.appendChild(propertyNode);
+    for (name in this.properties) {
+        var propertyNode = dom.createElementNS(PencilNamespaces.p, "Property");
+        propertyContainerNode.appendChild(propertyNode);
+        propertyNode.setAttribute("name", name);
+        var propValue = this.properties[name];
+        if(propValue){
+          propertyNode.appendChild(dom.createTextNode(propValue.toString()));
+        }
     }
-    
+
+
     if (this.contentNode && !noContent) {
-        var contentNode = pd.createElement("p:Content");
+        var contentNode = dom.createElementNS(PencilNamespaces.p, "p:Content");
         for (var i = 0; i < this.contentNode.childNodes.length; i ++) {
             var node = this.contentNode.childNodes[i];
             contentNode.appendChild(dom.importNode(node, true));
@@ -137,8 +101,8 @@ Page.prototype.toNode = function (dom, noContent) {
     return pageNode;
 };
 Page.prototype.equals = function (page) {
-    if (page === null) return false;
-    return page.constructor === Page && page.properties.id === this.properties.id;
+    if (page == null) return false;
+    return page.constructor == Page && page.properties.id == this.properties.id;
 };
 Page.prototype.getBackgroundPage = function () {
     var bgPageId = this.properties.background;
@@ -183,11 +147,11 @@ Page.prototype.isBackgroundValid = function () {
 };
 
 Page.prototype.ensureBackground = function (callback) { // callback: function() {} called when done
-    if (Config.get("object.snapping.background") === null) {
+    if (Config.get("object.snapping.background") == null) {
         Config.set("object.snapping.background", true);
     }
 
-    this._view.canvas.snappingHelper.updateSnappingDataFromBackground(this.getBackgroundPage(), Config.get("object.snapping.background") === false);
+    this._view.canvas.snappingHelper.updateSnappingDataFromBackground(this.getBackgroundPage(), Config.get("object.snapping.background") == false);
     this._view.canvas.setDimBackground(this.properties.dimBackground);
     var page = this.getBackgroundPage();
     if (this.isBackgroundValid()) {
