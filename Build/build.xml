@@ -16,7 +16,7 @@
     <property name="AUTHOR" value="Duong Thanh An (an.duong@evolus.vn) and Contributors" />
     <property name="XPINAME" value="Pencil-${VERSION}-${BUILD}-fx.xpi" />
     <property name="FXMINVER" value="3.0b3" />
-    <property name="FXMAXVER" value="3.6.*" />
+    <property name="FXMAXVER" value="4.0.*" />
     <property name="XRMINVER" value="1.9" />
     <property name="XRMAXVER" value="1.9.2.*" />
 
@@ -45,6 +45,9 @@
         <mkdir dir="${OUTPUTS}/XPI" />
         <copy todir="${OUTPUTS}/XPI">
             <fileset dir="./XPI" />
+        </copy>
+        <copy todir="${OUTPUTS}/XPI">
+            <fileset dir="./XULRunner" />
         </copy>
         <copy todir="${OUTPUTS}/XPI/chrome/content">
             <fileset dir="${OUTPUTS}/Pencil" />

@@ -5,7 +5,7 @@ export BUILD='0'
 export AUTHOR='Duong Thanh An (an.duong@evolus.vn) and Contributors'
 export XPINAME='Pencil-'$VERSION'-'$BUILD'-fx.xpi'
 export FXMINVER='3.0b3'
-export FXMAXVER='3.6.*'
+export FXMAXVER='4.0.*'
 export XRMINVER='1.9'
 export XRMAXVER='1.9.2.*'
 
