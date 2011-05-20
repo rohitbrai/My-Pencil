@@ -169,6 +169,7 @@ Pencil.behaviors.BoxFit = function (bound, align) {
 
         }
     } catch (e) {
+    	Console.dumpError(e);
     }
 };
 Pencil.behaviors.D = function (dLiteral) {

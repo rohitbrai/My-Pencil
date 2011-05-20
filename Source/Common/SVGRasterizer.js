@@ -23,12 +23,13 @@ function Rasterizer(format) {
     this.nextHandler = null;
 
     window.addEventListener("DOMFrameContentLoaded", function (event) {
-        debug("Rasterizer: DOMFrameContentLoaded, " + iframe.contentWindow);
-        if (!iframe.contentWindow._initialized) {
+    	var win = iframe.contentWindow;
+        debug("Rasterizer: DOMFrameContentLoaded, " + win);
+        if (!win._initialized) {
             debug("Initializing content window");
-            iframe.contentWindow._isRasterizeFrame = true;
-            iframe.contentWindow.addEventListener("MozAfterPaint", function (event) {
-                debug("MozAfterPaint: " + [event, event.originalTarget, iframe.contentWindow.document]);
+            win._isRasterizeFrame = true;
+            win.addEventListener("MozAfterPaint", function (event) {
+                debug("MozAfterPaint: " + [event, event.originalTarget, win.document]);
 
                 if (!event.originalTarget._isRasterizeFrame) return;
                 if (!thiz.nextHandler) return;
@@ -38,8 +39,11 @@ function Rasterizer(format) {
                 f();
 
             }, false);
-            iframe.contentDocument.documentElement.style.backgroundColor = "rgba(0, 0, 0, 0)";
-            iframe.contentWindow._initialized = true;
+            
+            var document = iframe.contentDocument.documentElement;
+            document.style = document.style || {};
+            document.style.backgroundColor = "rgba(0, 0, 0, 0)";
+            win._initialized = true;
         }
     }, false);
 
@@ -63,6 +67,7 @@ Rasterizer.prototype.getImageDataFromUrl = function (url, callback) {
     image.setAttribute("src", url);
 };
 Rasterizer.prototype.rasterizePageToUrl = function (page, callback) {
+	debug("Generating svg for page");
     var svg = document.createElementNS(PencilNamespaces.svg, "svg");
     svg.setAttribute("width", "" + page.properties.width  + "px");
     svg.setAttribute("height", "" + page.properties.height  + "px");
@@ -89,8 +94,7 @@ Rasterizer.prototype.rasterizePageToUrl = function (page, callback) {
     });
 };
 
-Rasterizer.prototype.rasterizeWindowToUrl = function (callback) {
-
+Rasterizer.prototype._prepareWindowForRasterization = function() {
     var h = 0;
     var w = 0;
     if (this._width && this._height) {
@@ -98,41 +102,42 @@ Rasterizer.prototype.rasterizeWindowToUrl = function (callback) {
         h = this._height;
     } else {
         var d =  this.win.document;
-        if( d.compatMode == "CSS1Compat" )
-        {
+        if( d.compatMode === "CSS1Compat" ) {
           h = d.documentElement.scrollHeight;
           w = d.documentElement.scrollWidth;
-        }
-        else
-        {
+        } else {
           h = d.body.scrollHeight;
           w = d.body.scrollWidth;
         }
     }
-    var canvasW = w;
-    var canvasH = h;
 
     var canvas = document.createElementNS(PencilNamespaces.html, "canvas");
-    canvas.style.width = canvasW + "px";
-    canvas.style.height = canvasH + "px";
-    canvas.width = canvasW;
-    canvas.height = canvasH;
+    canvas.style.width = w + "px";
+    canvas.style.height = h + "px";
+    canvas.width = w;
+    canvas.height = h;
+    
     var ctx = canvas.getContext("2d");
-    ctx.clearRect(0, 0, canvasW, canvasH);
+    ctx.clearRect(0, 0, w, h);
     ctx.save();
     ctx.scale(1, 1);
-    if (this._backgroundColor) {
-        var bgr = Color.fromString(this._backgroundColor);
-        ctx.drawWindow(this.win, 0, 0, w, h, bgr.toRGBAString());
-    } else {
-        ctx.drawWindow(this.win, 0, 0, w, h, "rgba(255,255,255,0)");
-    }
+    ctx.drawWindow(this.win, 0, 0, w, h, "rgba(255,255,255,0)");
     ctx.restore();
 
+	return {
+		canvas: canvas,
+		width: w,
+		height: h
+	};
+}
+
+Rasterizer.prototype.rasterizeWindowToUrl = function (callback) {
+	debug("Rasterizing window to URL");
+    canvas = this._prepareWindowForRasterization();
     data = {
-        url: canvas.toDataURL("image/png", ""),
-        width: canvasW,
-        height: canvasH
+        url: canvas.canvas.toDataURL("image/png", ""),
+        width: canvas.width,
+        height: canvas.height
     };
     callback(data);
 };
@@ -166,6 +171,7 @@ Rasterizer.prototype._saveNodeToTempFileAndLoad = function (svgNode, loadCallbac
     this.win.location.href = url;
 };
 Rasterizer.prototype.rasterizeDOMToUrl = function (svgNode, callback) {
+	debug("Rasterizing DOM to URL");
     try {
         this._width = svgNode.width.baseVal.value;
         this._height = svgNode.height.baseVal.value;
@@ -183,7 +189,7 @@ Rasterizer.prototype.rasterizeDOMToUrl = function (svgNode, callback) {
     }
 };
 Rasterizer.prototype.rasterizeDOM = function (svgNode, filePath, callback, preprocessor, backgroundColor) {
-
+	debug("Rasterizing DOM");
     this._width = svgNode.width.baseVal.value;
     this._height = svgNode.height.baseVal.value;
 
@@ -198,68 +204,18 @@ Rasterizer.prototype.rasterizeDOM = function (svgNode, filePath, callback, prepr
 };
 
 Rasterizer.prototype.rasterizeWindow = function (filePath, callback, preprocessor, backgroundColor) {
-
-
+	debug("Rasterizing window");
     if (preprocessor && preprocessor.process) {
+    	debug("Preprocessing document with "  + preprocessor);
         preprocessor.process(this.win.document);
     }
-
-    var h = 0;
-    var w = 0;
-    if (this._width && this._height) {
-        w = this._width;
-        h = this._height;
-    } else {
-        var d =  this.win.document;
-        if( d.compatMode == "CSS1Compat" )
-        {
-          h = d.documentElement.scrollHeight;
-          w = d.documentElement.scrollWidth;
-        }
-        else
-        {
-          h = d.body.scrollHeight;
-          w = d.body.scrollWidth;
-        }
-    }
-
-    var canvasW = w;
-    var canvasH = h;
-
-    var canvas = document.createElementNS(PencilNamespaces.html, "canvas");
-    canvas.style.width = canvasW + "px";
-    canvas.style.height = canvasH + "px";
-    canvas.width = canvasW;
-    canvas.height = canvasH;
-    var ctx = canvas.getContext("2d");
-    ctx.clearRect(0, 0, canvasW, canvasH);
-    ctx.save();
-    ctx.scale(1, 1);
-
-    if (backgroundColor) {
-        backgroundColor = Color.fromString(backgroundColor);
-        ctx.drawWindow(this.win, 0, 0, w, h, backgroundColor.toRGBAString());
-    } else {
-        ctx.drawWindow(this.win, 0, 0, w, h, "rgba(255,255,255,0)");
-    }
-    ctx.restore();
-
-    data = canvas.toDataURL("image/png", "");
-
+    canvas = this._prepareWindowForRasterization();
+    data = canvas.canvas.toDataURL(); // Defaults to image/png
     this.saveURI(data, filePath);
-    /*
-    if (this.lastTempFile && this.lastTempFile.exists()) {
-        this.lastTempFile.remove(true);
-    }
-    */
-
     callback();
 };
 
-Rasterizer.prototype.saveURI = function (url, file)
-{
-
-
+Rasterizer.prototype.saveURI = function (url, file) {
     uri = Components.classes["@mozilla.org/network/standard-url;1"].
           createInstance(Components.interfaces.nsIURI);
     uri.spec = url;
@@ -269,7 +225,7 @@ Rasterizer.prototype.saveURI = function (url, file)
     localFile.initWithPath(file)
 
     persistListener = new PersistProgressListener();
-    persist = Components.classes["@mozilla.org/embedding/browser/nsWebBrowserPersist;1"].
+    var persist = Components.classes["@mozilla.org/embedding/browser/nsWebBrowserPersist;1"].
               createInstance(Components.interfaces.nsIWebBrowserPersist);
 
     persist.progressListener = persistListener;
@@ -277,56 +233,31 @@ Rasterizer.prototype.saveURI = function (url, file)
     //persist.cancelSave();
 }
 
-function PersistProgressListener(callback)
-{
+function PersistProgressListener(callback) {
   this.init();
   this.callback = callback ? callback : null;
 }
 
-PersistProgressListener.prototype =
-{
-  QueryInterface : function(aIID)
-  {
+PersistProgressListener.prototype = {
+  QueryInterface : function(aIID) {
     if(aIID.equals(Components.interfaces.nsIWebProgressListener))
       return this;
     throw Components.results.NS_NOINTERFACE;
   },
-
-  init : function()
-  {
-  },
-
-  destroy : function()
-  {
-  },
-
+  init : function() {},
+  destroy : function() {},
   // nsIWebProgressListener
   onProgressChange : function (aWebProgress, aRequest,
                                aCurSelfProgress, aMaxSelfProgress,
-                               aCurTotalProgress, aMaxTotalProgress)
-  {
-  },
-
-  onStateChange : function(aWebProgress, aRequest, aStateFlags, aStatus)
-  {
-    if(aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_STOP)
-    {
+                               aCurTotalProgress, aMaxTotalProgress){},
+  onStateChange : function(aWebProgress, aRequest, aStateFlags, aStatus) {
+    if(aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_STOP) {
         if (this.callback) {
-            var f = this.callback;
-            f();
+            this.callback();
         }
     }
   },
-
-  onLocationChange : function(aWebProgress, aRequest, aLocation)
-  {
-  },
-
-  onStatusChange : function(aWebProgress, aRequest, aStatus, aMessage)
-  {
-  },
-
-  onSecurityChange : function(aWebProgress, aRequest, aState)
-  {
-  }
+  onLocationChange : function(aWebProgress, aRequest, aLocation) {},
+  onStatusChange : function(aWebProgress, aRequest, aStatus, aMessage) {},
+  onSecurityChange : function(aWebProgress, aRequest, aState){}
 };

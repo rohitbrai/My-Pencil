@@ -103,7 +103,7 @@ function BehaviorItemArg(literal, shapeDef, currentTarget, type) {
             }
             property.relatedTargets[currentTarget] = true;
             return "properties." + one;
-        });
+        });      
     }
 }
 BehaviorItemArg.prototype.toString = function () {

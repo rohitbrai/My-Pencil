@@ -1295,8 +1295,3 @@ LinkingGeometryPreprocessor.prototype.process = function (doc) {
         this.pageExtraInfo.objectsWithLinking.push(linkingInfo);
     }
 };
-
-
-
-
-

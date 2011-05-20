@@ -21,7 +21,6 @@ Bound.fromString = function(literal) {
         bound.w = parseInt(RegExp.$3);
         bound.h = parseInt(RegExp.$4);
     }
-    
     return bound;
 };
 
@@ -37,4 +36,9 @@ Bound.prototype.narrowed = function (x, y) {
 };
 
 pencilSandbox.Bound = Bound;
+
+// The following used to cope with the changes in firefox 4 c.u.evalInSandbox
+pencilSandbox.createBound = function(x,y,w,h) { return new Bound(x,y,w,h); };
+pencilSandbox.createBoundFromBox = function(box,paddingX,paddingY) { return Bound.fromBox(box, paddingX, paddingY);};
+pencilSandbox.createBoundFromString = function(literal) {return Bound.fromString(literal); };
 

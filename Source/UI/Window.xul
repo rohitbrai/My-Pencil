@@ -393,10 +393,6 @@
             <hbox id="FormatToolbar" class="ToolbarSection">
                 <toolbarbutton image="chrome://pencil/content/UI/Icons/format-painter-16.png" label="&toolbar.format.painter.label;" tooltiptext="&toolbar.copy.format.tooltiptext;" id="toolbarFormatPainterCommand" type="checkbox" command="formatPainterCommand"/>
             </hbox>
-            <!--
-            <textbox id="foo" size="20" onkeypress="if (event.keyCode == event.DOM_VK_RETURN) { var x = eval(document.getElementById('foo').value, window); if (x) alert(x); this.focus(); this.select();}"/>
-            <button default="true" label="&button.evaluate.label;" oncommand="var x = eval(document.getElementById('foo').value, window); if (x) alert(x);"/>
-            -->
         </toolbar>
     </toolbox>
     <popupset>

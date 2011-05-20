@@ -235,8 +235,16 @@ ShapeDefCollectionParser.getCollectionPropertyConfigName = function (collectionI
         Dom.workOn("./p:*", forNode, function (behaviorItemNode) {
             var item = new BehaviorItem();
             item.handler = Pencil.behaviors[behaviorItemNode.localName];
+               
             var count = Dom.workOn("./p:Arg", behaviorItemNode, function (argNode) {
-                item.args.push(new BehaviorItemArg(Dom.getText(argNode), shapeDef, behavior.target, argNode.getAttribute("literal")));
+            	
+            	  var bLiteral = Dom.getText(argNode);
+            
+                  bLiteral = bLiteral.replace(/new Bound/g, "createBound");	
+                  bLiteral = bLiteral.replace(/Bound\.fromBox/g, "createBoundFromBox");  
+                  bLiteral.replace(/Bound\.fromString/g, "createBoundFromString");
+            	
+                item.args.push(new BehaviorItemArg(bLiteral, shapeDef, behavior.target, argNode.getAttribute("literal")));
             });
 
             if (count == 0) {

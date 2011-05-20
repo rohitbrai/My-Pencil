@@ -636,23 +636,19 @@ Local.createTempDir = function (prefix) {
     return dir;
 };
 
-var Console = {};
-Console.log = function (message) {
+var Console = {}
+
+Console.log = function (message) {	
     //if (console && console.log) console.log(message);
 };
+
 Console.dumpError = function (exception, toConsole) {
-    var s = [
+    debug([
         exception.message,
         "",
         "Location: " + exception.fileName + " (" + exception.lineNumber + ")",
         "Stacktrace:\n\t" + (exception.stack ? exception.stack.replace(/\n/g, "\n\t") : "<empty stack trace>")
-    ].join("\n");
-
-    if (true) {
-        debug(s);
-    } else {
-        alert(s);
-    }
+    ].join("\n"));
 };
 
 var Util = {};
