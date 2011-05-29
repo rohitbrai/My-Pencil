@@ -60,4 +60,6 @@ CSS.fromString = function (raw) {
     css.importRaw(raw);
     return css;
 };
+
 pencilSandbox.CSS = CSS;
+pencilSandbox.createCSS = function() {return new CSS();}

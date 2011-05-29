@@ -117,6 +117,7 @@ Shape.prototype.applyBehaviorForProperty = function (name, dontValidateRelatedPr
                   literal = literal.replace(/Aligment.fromString/g, "createAlignmentFromString");
                   literal = literal.replace(/new RichText/g, "createRichText");
                   literal = literal.replace(/RichText.fromString/g, "createRichText");
+           	 	  literal = literal.replace(/new CSS/g, "createCSS");
            	 	
            	      arg.transformationApplied = true;	 
            	      arg.literal = literal;

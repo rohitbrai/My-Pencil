@@ -918,7 +918,7 @@ MenuItem]]></Property>
                         var title = items[i];
                         var css = new CSS();
                         var lastchar = items[i].charAt(items[i].length - 1);
-                        var height =  20 * $textFont.getPixelHeight / 12 ;
+                        var height =  20 * $textFont.getPixelHeight() / 12 ;
                         css.set("height", height+"px" );
                         css.set("line-height", height+"px" );
                         css.set("padding", "0px 5px");
