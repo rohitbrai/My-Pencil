@@ -57,7 +57,7 @@ Shape.prototype.setInitialPropertyValues = function (overridingValueMap) {
         if (overridingValueMap && overridingValueMap[name]) {
             var spec = overridingValueMap[name];
             if (spec.initialValueExpression) {
-                value = this.evalExpression(spec.initialValueExpression);
+                value = this.evalExpression(this.applyTransformations(spec.initialValueExpression));
             } else {
                 value = spec.initialValue;
             }
@@ -65,7 +65,7 @@ Shape.prototype.setInitialPropertyValues = function (overridingValueMap) {
             var prop = this.def.propertyMap[name];
 
             if (prop.initialValueExpression) {
-                value = this.evalExpression(prop.initialValueExpression);
+                value = this.evalExpression(this.applyTransformations(prop.initialValueExpression));
             } else {
                 value = prop.initialValue;
             }
@@ -105,26 +105,11 @@ Shape.prototype.applyBehaviorForProperty = function (name, dontValidateRelatedPr
             for (var j in item.args) {
                 var arg = item.args[j];
                 
-                var literal = arg.literal;
-                	
-               	if(!arg.transformationApplied) {
-               	  literal = literal.replace(/new Bound/g, "createBound");	
-                  literal = literal.replace(/Bound\.fromBox/g, "createBoundFromBox");  
-                  literal = literal.replace(/Bound\.fromString/g, "createBoundFromString");
-           	      literal = literal.replace(/new Dimension/g, "createDimension");
-           	      literal = literal.replace(/Dimension\.fromString/g, "createDimensionFromString");
-                  literal = literal.replace(/new Alignment/g, "createAlignment");
-                  literal = literal.replace(/Aligment.fromString/g, "createAlignmentFromString");
-                  literal = literal.replace(/new RichText/g, "createRichText");
-                  literal = literal.replace(/RichText.fromString/g, "createRichText");
-           	 	  literal = literal.replace(/new CSS/g, "createCSS");
-           	 	
-           	      arg.transformationApplied = true;	 
-           	      arg.literal = literal;
-               	}
-                	
-                debug(targetName + ":" + arg.literal);
-                	
+                if(!arg.isTransformationsApplied) {
+                  arg.literal = this.applyTransformations(arg.literal);
+                  arg.isTransformationsApplied = true;
+                }
+                 	
                 if (!arg.type) {
                     args.push(this.evalExpression(arg.literal));
                 } else {
@@ -160,7 +145,7 @@ Shape.prototype.validateRelatedProperties = function (name) {
 
             var f = value[functionName];
             try {
-                var metaValue = this.evalExpression("(" + property.meta[meta] + ")");
+                var metaValue = this.evalExpression(this.applyTransformations("(" + property.meta[meta] + ")"));
                 f.call(value, metaValue);
             } catch (e) {
                 Console.dumpError(e, "--to-console");
@@ -554,7 +539,7 @@ Shape.prototype.getTextEditingInfo = function (editingEvent) {
         var prop = this.def.propertyMap[name];
         if (prop.meta.editInfo) {
             F._target = this.svg;
-            var info = this.evalExpression(prop.meta.editInfo);
+            var info = this.evalExpression(this.applyTransformations(prop.meta.editInfo));
 
             if (info) {
                 info.prop = prop;
@@ -795,4 +780,34 @@ Shape.prototype.getSnappingGuide = function () {
     return {
         vertical: vertical, horizontal: horizontal
     }
+};
+Shape.prototype.applyTransformations = function (literal) {
+  	  // Transform each expression that is no longer 
+ 	  // valid in Firefox 4 to use function that does
+ 	  // work. 
+ 	  //
+ 	  // EvalInSandbox in Chrome 2.0 does not support 
+ 	  // exporting constructors or function attached to 
+ 	  // a namespace defined as a function:
+ 	  //
+ 	  // new Bound() -> no,no
+ 	  // createBound = function() { return new Bound(); } -> OK
+ 	  // function Bound() {); Bound.fromString -> no no
+ 	  // Bound = {}; Bound.fromString -> OK
+ 	  //
+ 	  // TODO: Add a version check -> If the user has 
+ 	  // an earlier version of Firefox then these transformations
+ 	  // are irrelevant and time should not be spent with them
+    literal = literal.replace(/new Bound/g, "createBound");	
+    literal = literal.replace(/Bound\.fromBox/g, "createBoundFromBox");  
+    literal = literal.replace(/Bound\.fromString/g, "createBoundFromString");
+    literal = literal.replace(/new Dimension/g, "createDimension");
+    literal = literal.replace(/Dimension\.fromString/g, "createDimensionFromString");
+    literal = literal.replace(/new Alignment/g, "createAlignment");
+    literal = literal.replace(/Aligment.fromString/g, "createAlignmentFromString");
+    literal = literal.replace(/new RichText/g, "createRichText");
+    literal = literal.replace(/RichText.fromString/g, "createRichText");
+    literal = literal.replace(/new CSS/g, "createCSS");
+    literal = literal.replace(/CSS.fromString/g, "createCSSFromString");
+	return literal;
 };

@@ -1245,6 +1245,7 @@ window.addEventListener("DOMContentLoaded", function () {
 
 var pencilSandbox = Components.utils.Sandbox("http://pencil.evolus.vn/");
 pencilSandbox.Dom = Dom;
+pencilSandbox.Console = Console;
 
 Util.importSandboxFunctions = function () {
     for (var i = 0; i < arguments.length; i ++) {

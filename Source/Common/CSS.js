@@ -63,3 +63,4 @@ CSS.fromString = function (raw) {
 
 pencilSandbox.CSS = CSS;
 pencilSandbox.createCSS = function() {return new CSS();}
+pencilSandbox.createCSSFromString = CSS.fromString;
