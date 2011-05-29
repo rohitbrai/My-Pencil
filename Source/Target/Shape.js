@@ -104,6 +104,26 @@ Shape.prototype.applyBehaviorForProperty = function (name, dontValidateRelatedPr
             var args = [];
             for (var j in item.args) {
                 var arg = item.args[j];
+                
+                var literal = arg.literal;
+                	
+               	if(!arg.transformationApplied) {
+               	  literal = literal.replace(/new Bound/g, "createBound");	
+                  literal = literal.replace(/Bound\.fromBox/g, "createBoundFromBox");  
+                  literal = literal.replace(/Bound\.fromString/g, "createBoundFromString");
+           	      literal = literal.replace(/new Dimension/g, "createDimension");
+           	      literal = literal.replace(/Dimension\.fromString/g, "createDimensionFromString");
+                  literal = literal.replace(/new Alignment/g, "createAlignment");
+                  literal = literal.replace(/Aligment.fromString/g, "createAlignmentFromString");
+                  literal = literal.replace(/new RichText/g, "createRichText");
+                  literal = literal.replace(/RichText.fromString/g, "createRichText");
+           	 	
+           	      arg.transformationApplied = true;	 
+           	      arg.literal = literal;
+               	}
+                	
+                debug(targetName + ":" + arg.literal);
+                	
                 if (!arg.type) {
                     args.push(this.evalExpression(arg.literal));
                 } else {

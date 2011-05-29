@@ -23,3 +23,5 @@ Dimension.prototype.narrowed = function (delta, delta2) {
 
 pencilSandbox.Dimension = Dimension;
 
+pencilSandbox.createDimension = function(w,h) { return new Dimension(w,h); };
+pencilSandbox.createDimensionFromString = function(literal) { return Dimension.fromString(literal); };

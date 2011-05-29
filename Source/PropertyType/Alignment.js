@@ -18,4 +18,6 @@ Alignment.prototype.toString = function () {
 };
 
 pencilSandbox.Alignment = Alignment;
+pencilSandbox.createAlignment = function(h,v) { return new Alignment(h,v);};
+pencilSandbox.createAlignmentFromString = function(literal) {return Alignment.fromString(literal);};
 

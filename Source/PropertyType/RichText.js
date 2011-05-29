@@ -13,4 +13,4 @@ RichText.fromLoremIpsum = function (words) {
 };
 
 pencilSandbox.RichText = RichText;
-
+pencilSandbox.createRichText = function(html) { return new RichText(html); };

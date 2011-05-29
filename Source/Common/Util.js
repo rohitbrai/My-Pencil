@@ -10,8 +10,11 @@ const PR_TRUNCATE    = 0x20;
 const PR_SYNC        = 0x40;
 const PR_EXCL        = 0x80;
 
-/* class */ function Dom() {
-}
+/* class */ 
+// Changed Dom from a function to an object because
+// function as a static namespace does not work 
+// in a sandboxed context as of Firefox 4.
+var Dom = {};
 
 /* static int */ Dom.workOn = function (xpath, node, worker) {
     var nodes = Dom.getList(xpath, node);
