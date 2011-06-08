@@ -140,7 +140,6 @@ Page.prototype.canSetBackgroundTo = function (page) {
 Page.prototype.isBackgroundValid = function () {
     var page = this.getBackgroundPage();
     if (!page) return (this.bgToken ? false : true);
-    if (!page.isRasterizeDataCacheValid()) return false;
     if (!page.rasterizeDataCache || (page.rasterizeDataCache.token != this.bgToken)) return false;
 
     return true;
@@ -154,11 +153,9 @@ Page.prototype.ensureBackground = function (callback) { // callback: function() 
     this._view.canvas.snappingHelper.updateSnappingDataFromBackground(this.getBackgroundPage(), Config.get("object.snapping.background") == false);
     this._view.canvas.setDimBackground(this.properties.dimBackground);
     var page = this.getBackgroundPage();
-    if (this.isBackgroundValid()) {
-        if (callback) callback();
-        return;
+    if (!this.isBackgroundValid()) {
+        this.rasterizeDataCache = null;
     }
-    this.rasterizeDataCache = null;
     if (!page) {
         this.bgToken = null;
         this._view.canvas.setBackgroundImageData(null);
