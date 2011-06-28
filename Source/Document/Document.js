@@ -23,39 +23,30 @@ PencilDocument.prototype.toDom = function () {
     //pages
     var pageContainerNode = dom.createElementNS(PencilNamespaces.p, "Pages");
     dom.documentElement.appendChild(pageContainerNode);
-
     for (i in this.pages) {
         pageContainerNode.appendChild(this.pages[i].toNode(dom));
     }
-
     return dom;
 };
 
 PencilDocument.prototype.addPage = function (page) {
-    this.pages[this.pages.length] = page;
+	this.pages.push(page);
 };
 PencilDocument.prototype.getPageById = function (id) {
-    for (var i in this.pages) {
-        if (this.pages[i].properties.id == id) return this.pages[i];
-    }
-
-    return null;
+    return this._match("id", id);
 };
 PencilDocument.prototype.getPageByFid = function (fid) {
-    for (var i in this.pages) {
-        if (this.pages[i].properties.fid == fid) return this.pages[i];
-    }
-
-    return null;
+	return this._match("fid", fid);
 };
 PencilDocument.prototype.getFirstPageByName = function (name) {
+	return this._match("name", name);
+};
+PencilDocument.prototype._match = function(prop, value) {
     for (var i in this.pages) {
-        if (this.pages[i].properties.name == name) return this.pages[i];
+        if (this.pages[i].properties[prop] === value) return this.pages[i];
     }
-
     return null;
 };
-
 
 function Page(doc) {
     if (!doc) throw Util.getMessage("attempting.to.construct.a.page.outside.the.scope.of.a.valid.document");
@@ -66,7 +57,7 @@ function Page(doc) {
         lastId: null,
         lastUpdateTimestamp: 0
     };
-    this.rasterizeCache = null;
+    this.rasterizeDataCache = null;
 }
 Page.prototype.validateLoadedData = function () {
     this.properties.dimBackground = (this.properties.dimBackground == "true");
@@ -105,10 +96,9 @@ Page.prototype.equals = function (page) {
     return page.constructor == Page && page.properties.id == this.properties.id;
 };
 Page.prototype.getBackgroundPage = function () {
-    var bgPageId = this.properties.background;
-    if (!bgPageId) return null;
-
-    return this.doc.getPageById(bgPageId);
+    var id = this.properties.background;
+    if (!id || id === 'transparent') return null;
+    return this.doc.getPageById(id);
 };
 
 Page._validateBackgroundInternal = function (list, page) {
@@ -125,10 +115,9 @@ Page._validateBackgroundInternal = function (list, page) {
     }
 };
 Page.prototype.validateBackgroundSetting = function () {
-    var page = this.getBackgroundPage();
-    if (!page) return;
-
-    Page._validateBackgroundInternal([this], page);
+    var p = this.getBackgroundPage();
+    if (!p) return;
+    Page._validateBackgroundInternal([this], p);
 };
 Page.prototype.canSetBackgroundTo = function (page) {
     try {
@@ -146,6 +135,9 @@ Page.prototype.isBackgroundValid = function () {
 };
 
 Page.prototype.ensureBackground = function (callback) { // callback: function() {} called when done
+
+    //debug('drawing page background of ' + this.properties.id);   
+   
     if (Config.get("object.snapping.background") == null) {
         Config.set("object.snapping.background", true);
     }
@@ -157,6 +149,7 @@ Page.prototype.ensureBackground = function (callback) { // callback: function() 
         this.rasterizeDataCache = null;
     }
     if (!page) {
+    	// debug('No background page set for ' + this.properties.id);   
         this.bgToken = null;
         this._view.canvas.setBackgroundImageData(null);
 
@@ -165,21 +158,23 @@ Page.prototype.ensureBackground = function (callback) { // callback: function() 
     }
     var thiz = this;
     page.getRasterizeData(function (rasterizeData) {
+    	// debug('Setting background of ' + thiz.properties.id);   
+       
         thiz.bgToken = rasterizeData.token;
-        //alert([page.properties.name, rasterizeData.image.width, rasterizeData.image.height]);
         try {
             thiz._view.canvas.setBackgroundImageData(rasterizeData.image, thiz.properties.dimBackground);
         } catch (e) {
             Console.dumpError(e);
         }
 
+		// debug('Background set ' + thiz.properties.id + " calling " + callback);   
+       
         if (callback) callback();
     });
 };
 Page.prototype.getRasterizeData = function (callback) {
     if (this.isRasterizeDataCacheValid()) {
         callback(this.rasterizeDataCache);
-
         return;
     }
     var thiz = this;
@@ -211,7 +206,3 @@ Page.prototype.generateFriendlyId = function (usedFriendlyIds) {
     usedFriendlyIds.push(name);
     return name;
 };
-
-
-
-

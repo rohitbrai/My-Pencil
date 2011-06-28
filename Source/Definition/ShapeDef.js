@@ -127,13 +127,3 @@ function Shortcut() {
     this.shape = null;
     this.propertyMap = {};
 }
-
-
-
-
-
-
-
-
-
-

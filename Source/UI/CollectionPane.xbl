@@ -293,9 +293,9 @@
                 <![CDATA[
 
                     try {
-                        //debug("start draging");
+                        debug("start draging");
                         var defNode = Dom.findUpward(event.originalTarget, function (node) { return node._def; });
-                        //debug(defNode);
+                        debug(defNode);
 
                         nsDragAndDrop.startDrag(event, {
                             onDragStart: function (evt, transferData, action) {
@@ -309,7 +309,7 @@
                                 transferData.data.addDataForFlavour("text/unicode", def.displayName);
                             }
                         });
-                        //debug("end draging");
+                        debug("end draging");
                     } catch (e) { alert(e); }
                 ]]>
                 </body>

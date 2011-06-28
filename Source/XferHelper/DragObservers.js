@@ -35,17 +35,18 @@ ShapeDefDragObserver.prototype = {
             return;
         }
 
-        if (delta < 500) return;
-
+        if (delta < 500) {
+        	return;
+        }
         var transferData = nsTransferable.get(this.getSupportedFlavours(), nsDragAndDrop.getDragData, true);
         var defId = null;
         try {
             defId = transferData.first.first.data;
         } catch (e) {
+        	Console.dumpError(e);
             return;
         }
 
-        debug("onDragEnter, defId: " + defId);
         var def = CollectionManager.shapeDefinition.locateDefinition(defId);
 
         var loc = this.canvas.getEventLocation(event);

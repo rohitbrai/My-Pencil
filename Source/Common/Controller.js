@@ -235,7 +235,7 @@ Controller.prototype.newPage = function () {
     var background = returnValueHolder.data.background ? returnValueHolder.data.background : null;
     var dimBackground = returnValueHolder.data.dimBackground ? true : false;
     var backgroundColor = returnValueHolder.data.backgroundColor ? returnValueHolder.data.backgroundColor : "#ffffff";
-    var transparentBackground = returnValueHolder.data.transparentBackground == "false" ? "false" : "true";
+    var transparentBackground = returnValueHolder.data.transparentBackground != "false";
 
     var id = this._generateId();
 
@@ -482,7 +482,7 @@ Controller.prototype._addPage = function (name, id, width, height, background, d
     page._doc = this.doc;
 
     this._createPageView(page, function () {
-        page.ensureBackground();
+         page.ensureBackground();
     });
 };
 Controller.prototype._createPageView = function (page, callback) {
@@ -513,7 +513,8 @@ Controller.prototype._createPageView = function (page, callback) {
         Pencil.installXferHelpers(canvas);
         Pencil.installDragObservers(canvas);
         if (page.contentNode) {
-            for (var i = 0; i < page.contentNode.childNodes.length; i ++) {
+        	var cnlength = page.contentNode.childNodes.length;
+            for (var i = 0; i < cnlength; i++) {
                 var node = page.contentNode.childNodes[i];
                 canvas.drawingLayer.appendChild(canvas.ownerDocument.importNode(node, true));
             }
@@ -524,13 +525,15 @@ Controller.prototype._createPageView = function (page, callback) {
             page.rasterizeDataCache = null;
         }, false);
 
-        if (page.properties.transparentBackground == "true" || page.properties.background) {
+        if (page.properties.transparentBackground === "true" || page.properties.background) {
             canvas.setBackgroundColor(Color.fromString("#ffffffff"));
         } else {
             canvas.setBackgroundColor(Color.fromString(page.properties.backgroundColor));
         }
         canvas.snappingHelper.rebuildSnappingGuide();
         if (callback) callback();
+        Dom.emitEvent('p:ContentModified', canvas);
+      
     }, 200);
 };
 Controller.prototype._setSelectedPageIndex = function (index) {

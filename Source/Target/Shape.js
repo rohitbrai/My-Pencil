@@ -781,7 +781,7 @@ Shape.prototype.getSnappingGuide = function () {
         vertical: vertical, horizontal: horizontal
     }
 };
-Shape.prototype.applyTransformations = function (literal) {
+Shape.prototype.applyTransformations = function (l) {
   	  // Transform each expression that is no longer 
  	  // valid in Firefox 4 to use function that does
  	  // work. 
@@ -798,16 +798,19 @@ Shape.prototype.applyTransformations = function (literal) {
  	  // TODO: Add a version check -> If the user has 
  	  // an earlier version of Firefox then these transformations
  	  // are irrelevant and time should not be spent with them
-    literal = literal.replace(/new Bound/g, "createBound");	
-    literal = literal.replace(/Bound\.fromBox/g, "createBoundFromBox");  
-    literal = literal.replace(/Bound\.fromString/g, "createBoundFromString");
-    literal = literal.replace(/new Dimension/g, "createDimension");
-    literal = literal.replace(/Dimension\.fromString/g, "createDimensionFromString");
-    literal = literal.replace(/new Alignment/g, "createAlignment");
-    literal = literal.replace(/Aligment.fromString/g, "createAlignmentFromString");
-    literal = literal.replace(/new RichText/g, "createRichText");
-    literal = literal.replace(/RichText.fromString/g, "createRichText");
-    literal = literal.replace(/new CSS/g, "createCSS");
-    literal = literal.replace(/CSS.fromString/g, "createCSSFromString");
-	return literal;
+    l = l.replace(/new Bound/g, "createBound");	
+    l = l.replace(/Bound\.fromBox/g, "createBoundFromBox");  
+    l = l.replace(/Bound\.fromString/g, "createBoundFromString");
+    l = l.replace(/new Dimension/g, "createDimension");
+    l = l.replace(/Dimension\.fromString/g, "createDimensionFromString");
+    l = l.replace(/new Alignment/g, "createAlignment");
+    l = l.replace(/Aligment\.fromString/g, "createAlignmentFromString");
+    l = l.replace(/new RichText/g, "createRichText");
+    l = l.replace(/RichText\.fromString/g, "createRichText");
+    l = l.replace(/new CSS/g, "createCSS");
+    l = l.replace(/CSS\.fromString/g, "createCSSFromString");
+    l = l.replace(/new Color/g, "createColor");
+    l = l.replace(/Color\.fromString/g, "createColorFromString");
+    l = l.replace(/Color\.fromHSV/g, "createColorFromHSV");
+	return l;
 };

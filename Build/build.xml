@@ -10,13 +10,13 @@
     </tstamp>
 
     <!--<property name="BUILD" value="${DSTAMP}${TSTAMP}" />-->
-    <property name="BUILD" value="1" />
+    <property name="BUILD" value="26" />
     <property name="NAME" value="Pencil-fork" />
     <property name="VERSION" value="1.2" />
     <property name="AUTHOR" value="Fork: Aleksi Yrttiaho, Original authors: Duong Thanh An (an.duong@evolus.vn) and Contributors" />
     <property name="XPINAME" value="Pencil-${VERSION}-${BUILD}-fx.xpi" />
     <property name="FXMINVER" value="3.0b3" />
-    <property name="FXMAXVER" value="4.0.*" />
+    <property name="FXMAXVER" value="6.0.*" />
     <property name="XRMINVER" value="1.9" />
     <property name="XRMAXVER" value="1.9.2.*" />
 

@@ -148,4 +148,8 @@ Color.prototype.getHSV = function () {
 };
 
 pencilSandbox.Color = Color;
+pencilSandbox.createColor = Color.prototype.constructor;
+pencilSandbox.createColorFromString = Color.fromString;
+pencilSandbox.createColorFromHSV = Color.fromHSV;
+
 

@@ -462,16 +462,3 @@ window.addEventListener("close", function (event) {
     }
     Pencil.rasterizer.cleanup();
 }, false);
-
-
-
-
-
-
-
-
-
-
-
-
-
